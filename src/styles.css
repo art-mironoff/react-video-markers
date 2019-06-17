@@ -1,0 +1,176 @@
+.react-video-wrap {
+  min-height: 450px;
+  width: 800px;
+}
+
+.react-video-wrap video {
+  background-color: #000000;
+  display: block;
+  width: 100%;
+}
+
+.react-video-controls {
+  background-color: #e7e7e7;
+  display: flex;
+  height: 36px;
+}
+
+.react-video-controls button {
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: center center;
+  border: 0;
+  cursor: pointer;
+  margin: 10px 14px;
+  padding: 0;
+  outline: none;
+  height: 16px;
+  width: 16px;
+  text-indent: -9999px;
+}
+
+.react-video-controls .play {
+  background-image: url('./images/play-black.svg');
+}
+
+.react-video-controls .pause {
+  background-image: url('./images/pause-black.svg');
+  background-size: 15px;
+}
+
+.react-video-controls .mute {
+   background-image: url('./images/mute-black.svg');
+   background-position-x: 0;
+   margin-right: 7px;
+   width: 17px;
+}
+
+.react-video-controls .unmute {
+   background-image: url('./images/unmute-black.svg');
+   background-position-x: 0;
+   margin-right: 7px;
+   width: 17px;
+}
+
+.react-video-controls .full-screen {
+  background-image: url('./images/full-screen-black.svg');
+  margin-left: 7px;
+  margin-right: 10px;
+}
+
+.react-video-controls progress {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.react-video-controls progress::-webkit-progress-value {
+  background: #28C0F0;
+}
+
+.react-video-controls progress::-webkit-progress-value {
+  background: #ffffff;
+}
+
+.react-video-controls .progress-wrap {
+  margin-top: 5px;
+  position: relative;
+  width: calc(100% - 120px);
+}
+
+.react-video-controls progress::-webkit-progress-value {
+  background: #28C0F0;
+}
+
+.react-video-controls progress::-webkit-progress-bar {
+  background: #ffffff;
+}
+
+.react-video-controls .progress-wrap  progress {
+  height: 8px;
+  width: 100%;
+}
+
+.react-video-controls .progress-wrap .react-video-marker {
+  background-color: #666666;
+  cursor: pointer;
+  display: block;
+  height: 8px;
+  width: 4px;
+  position: absolute;
+  top: 9px;
+  left: 50%;
+}
+
+.react-video-controls .volume-wrap {
+  position: relative;
+}
+
+.react-video-controls .volume-wrap:hover progress {
+ display: block;
+}
+
+.react-video-controls .volume-wrap progress {
+  display: none;
+  height: 12px;
+  position: absolute;
+  top: -50px;
+  left: -28px;
+  transform: rotate(-90deg);
+  width: 100px;
+}
+
+.react-video-full-screen .react-video-wrap {
+  background-color: #000000;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+}
+
+.react-video-full-screen .react-video-player {
+  height: calc(100vh - 36px);
+  max-width: 100%;
+}
+
+.react-video-full-screen .react-video-close {
+  background: url('./images/close-video.svg') no-repeat transparent;
+  border: 0;
+  cursor: pointer;
+  opacity: 1;
+  outline: none;
+  text-indent: -9999px;
+  height: 23px;
+  width: 23px;
+  position: absolute;
+  top: 36px;
+  right: 77px;
+}
+
+.react-video-full-screen .react-video-controls {
+  background-color: #595959;
+}
+
+.react-video-full-screen .react-video-controls .play {
+  background-image: url('./images/play-white.svg');
+}
+
+.react-video-full-screen .react-video-controls .pause {
+  background-image: url('./images/pause-white.svg');
+}
+
+.react-video-full-screen .react-video-controls .mute {
+  background-image: url('./images/mute-white.svg');
+}
+
+.react-video-full-screen .react-video-controls .unmute {
+  background-image: url('./images/unmute-white.svg');
+}
+
+.react-video-full-screen .react-video-controls .full-screen {
+  background-image: url('./images/full-screen-white.svg');
+}
