@@ -38,15 +38,15 @@
   background-size: 15px;
 }
 
-.react-video-controls .mute {
-   background-image: url('./images/mute-black.svg');
+.react-video-controls .volume {
+   background-image: url('./images/volume-black.svg');
    background-position-x: 0;
    margin-right: 7px;
    width: 17px;
 }
 
-.react-video-controls .unmute {
-   background-image: url('./images/unmute-black.svg');
+.react-video-controls .no-volume {
+   background-image: url('./images/no-volume-black.svg');
    background-position-x: 0;
    margin-right: 7px;
    width: 17px;
@@ -163,12 +163,12 @@
   background-image: url('./images/pause-white.svg');
 }
 
-.react-video-full-screen .react-video-controls .mute {
-  background-image: url('./images/mute-white.svg');
+.react-video-full-screen .react-video-controls .volume {
+  background-image: url('./images/volume-white.svg');
 }
 
-.react-video-full-screen .react-video-controls .unmute {
-  background-image: url('./images/unmute-white.svg');
+.react-video-full-screen .react-video-controls .no-volume {
+  background-image: url('./images/no-volume-white.svg');
 }
 
 .react-video-full-screen .react-video-controls .full-screen {

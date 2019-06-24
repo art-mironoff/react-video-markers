@@ -195,7 +195,7 @@ class VideoPlayer extends PureComponent {
               {DEFAULT_VOLUME}% volume
             </progress>
             <button
-              className={muted ? 'unmute' : 'mute'}
+              className={muted ? 'no-volume' : 'volume'}
               onClick={this.onMuteClick}>
               Volume
             </button>
