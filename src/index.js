@@ -100,7 +100,10 @@ class VideoPlayer extends PureComponent {
     const {player, volume} = this.refs;
     player.volume = percentage / 100;
     volume.value = percentage;
-    volume.innerHTML = percentage + '% volume'
+    volume.innerHTML = percentage + '% volume';
+    this.setState({
+      muted: !percentage
+    });
   };
 
   onMuteClick = () => {

@@ -64,31 +64,23 @@
   cursor: pointer;
 }
 
-.react-video-controls progress::-webkit-progress-value {
-  background: #28C0F0;
-}
-
-.react-video-controls progress::-webkit-progress-value {
-  background: #ffffff;
-}
-
 .react-video-controls .progress-wrap {
   margin-top: 5px;
   position: relative;
   width: calc(100% - 120px);
 }
 
-.react-video-controls progress::-webkit-progress-value {
+.react-video-controls .progress-wrap progress {
+  height: 8px;
+  width: 100%;
+}
+
+.react-video-controls .progress-wrap progress::-webkit-progress-value {
   background: #28C0F0;
 }
 
-.react-video-controls progress::-webkit-progress-bar {
+.react-video-controls .progress-wrap progress::-webkit-progress-bar {
   background: #ffffff;
-}
-
-.react-video-controls .progress-wrap  progress {
-  height: 8px;
-  width: 100%;
 }
 
 .react-video-controls .progress-wrap .react-video-marker {
@@ -111,13 +103,24 @@
 }
 
 .react-video-controls .volume-wrap progress {
+  border-radius: 2px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   display: none;
   height: 12px;
+  overflow: hidden;
   position: absolute;
-  top: -50px;
-  left: -28px;
+  top: -52px;
+  left: -31px;
   transform: rotate(-90deg);
   width: 100px;
+}
+
+.react-video-controls .volume-wrap progress::-webkit-progress-value {
+  background: #ffffff;
+}
+
+.react-video-controls .volume-wrap progress::-webkit-progress-bar {
+  background: #9d9d9d;
 }
 
 .react-video-full-screen .react-video-wrap {
