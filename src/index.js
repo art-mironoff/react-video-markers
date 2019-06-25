@@ -11,6 +11,7 @@ const DEFAULT_VOLUME = 70;
 class VideoPlayer extends PureComponent {
   state = {
     isPlaying: false,
+    currentTime: 0,
     duration: null,
     muted: false,
     isFullScreen: false
@@ -44,6 +45,19 @@ class VideoPlayer extends PureComponent {
     }
   };
 
+  getTimeCode = secs => {
+    let secondsNumber = secs ? parseInt(secs, 10) : 0;
+    let hours = Math.floor(secondsNumber / 3600);
+    let minutes = Math.floor((secondsNumber - (hours * 3600)) / 60);
+    let seconds = secondsNumber - (hours * 3600) - (minutes * 60);
+
+    if (hours < 10) {hours = '0' + hours;}
+    if (minutes < 10) {minutes = '0' + minutes;}
+    if (seconds < 10) {seconds = '0' + seconds;}
+
+    return `${hours !== '00' ? hours + ':' : ''}${minutes}:${seconds}`;
+  };
+
   onPlayerClick = () => {
     const {isPlaying} = this.state;
     if (isPlaying) {
@@ -61,6 +75,7 @@ class VideoPlayer extends PureComponent {
   onProgress = (e) => {
     const {currentTime, duration} = e.currentTarget;
     if (duration) {
+      this.setState({currentTime});
       const {progress} = this.refs;
       const percentage = (100 / duration) * currentTime;
       progress.value = percentage;
@@ -158,7 +173,9 @@ class VideoPlayer extends PureComponent {
 
   render() {
     const {url, markers} = this.props;
-    const {isPlaying, duration, muted, isFullScreen} = this.state;
+    const {isPlaying, currentTime, duration, muted, isFullScreen} = this.state;
+    const durationTimeCode = this.getTimeCode(Math.ceil(duration));
+    const currentTimeCode = currentTime !== duration ? this.getTimeCode(currentTime) : durationTimeCode;
     return (
       <div className="react-video-wrap">
         <video className="react-video-player" ref="player" onProgress={this.onProgress} onClick={this.onPlayerClick}>
@@ -177,6 +194,9 @@ class VideoPlayer extends PureComponent {
             onClick={isPlaying ? this.onPauseClick : this.onPlayClick}>
             {isPlaying ? 'Pause' : 'Play'}
           </button>
+          <div className="time">
+            {currentTimeCode}/{durationTimeCode}
+          </div>
           <div className="progress-wrap" ref="progressWrap">
             <progress ref="progress" min="0" max="100" onClick={this.onProgressClick}>
               0% played

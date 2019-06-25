@@ -58,6 +58,13 @@
   margin-right: 10px;
 }
 
+.react-video-controls .time {
+  color: #969696;
+  font-size: 10px;
+  line-height: 39px;
+  padding-right: 15px;
+}
+
 .react-video-controls progress {
   appearance: none;
   -webkit-appearance: none;
