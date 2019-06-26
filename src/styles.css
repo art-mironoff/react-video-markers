@@ -184,3 +184,7 @@
 .react-video-full-screen .react-video-controls .full-screen {
   background-image: url('./images/full-screen-white.svg');
 }
+
+.react-video-full-screen .react-video-controls .time {
+  color: #ffffff;
+}

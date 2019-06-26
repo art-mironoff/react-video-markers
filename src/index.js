@@ -1,9 +1,9 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
-import Marker from './Marker';
+import Controls from './Controls';
 import './styles.css';
 
-const DEFAULT_VOLUME = 70;
+export const DEFAULT_VOLUME = 70;
 
 /**
  * @namespace this.refs.player
@@ -45,19 +45,6 @@ class VideoPlayer extends PureComponent {
     }
   };
 
-  getTimeCode = secs => {
-    let secondsNumber = secs ? parseInt(secs, 10) : 0;
-    let hours = Math.floor(secondsNumber / 3600);
-    let minutes = Math.floor((secondsNumber - (hours * 3600)) / 60);
-    let seconds = secondsNumber - (hours * 3600) - (minutes * 60);
-
-    if (hours < 10) {hours = '0' + hours;}
-    if (minutes < 10) {minutes = '0' + minutes;}
-    if (seconds < 10) {seconds = '0' + seconds;}
-
-    return `${hours !== '00' ? hours + ':' : ''}${minutes}:${seconds}`;
-  };
-
   onPlayerClick = () => {
     const {isPlaying} = this.state;
     if (isPlaying) {
@@ -76,7 +63,7 @@ class VideoPlayer extends PureComponent {
     const {currentTime, duration} = e.currentTarget;
     if (duration) {
       this.setState({currentTime});
-      const {progress} = this.refs;
+      const {progress} = this.refs.controls.refs;
       const percentage = (100 / duration) * currentTime;
       progress.value = percentage;
       progress.innerHTML = percentage + '% played';
@@ -97,14 +84,16 @@ class VideoPlayer extends PureComponent {
   };
 
   onProgressClick = e => {
-    const {player, progress} = this.refs;
+    const {player} = this.refs;
+    const {progress} = this.refs.controls.refs;
     const x = e.clientX - progress.getBoundingClientRect().left + document.body.scrollLeft;
     const percentage = x * progress.max / progress.offsetWidth;
     player.currentTime = percentage / 100 * player.duration;
   };
 
   onVolumeClick = e => {
-    const {volume, player} = this.refs;
+    const {player} = this.refs;
+    const {volume} = this.refs.controls.refs;
     const y = volume.offsetWidth - (e.clientY - volume.getBoundingClientRect().top + document.body.scrollTop);
     const percentage = y * volume.max / volume.offsetWidth;
     this.setVolume(percentage);
@@ -112,7 +101,8 @@ class VideoPlayer extends PureComponent {
   };
 
   setVolume = percentage => {
-    const {player, volume} = this.refs;
+    const {player} = this.refs;
+    const {volume} = this.refs.controls.refs;
     player.volume = percentage / 100;
     volume.value = percentage;
     volume.innerHTML = percentage + '% volume';
@@ -174,8 +164,6 @@ class VideoPlayer extends PureComponent {
   render() {
     const {url, markers} = this.props;
     const {isPlaying, currentTime, duration, muted, isFullScreen} = this.state;
-    const durationTimeCode = this.getTimeCode(Math.ceil(duration));
-    const currentTimeCode = currentTime !== duration ? this.getTimeCode(currentTime) : durationTimeCode;
     return (
       <div className="react-video-wrap">
         <video className="react-video-player" ref="player" onProgress={this.onProgress} onClick={this.onPlayerClick}>
@@ -188,47 +176,21 @@ class VideoPlayer extends PureComponent {
             Close video
           </button> : null
         }
-        <div className="react-video-controls">
-          <button
-            className={isPlaying ? 'pause' : 'play'}
-            onClick={isPlaying ? this.onPauseClick : this.onPlayClick}>
-            {isPlaying ? 'Pause' : 'Play'}
-          </button>
-          <div className="time">
-            {currentTimeCode}/{durationTimeCode}
-          </div>
-          <div className="progress-wrap" ref="progressWrap">
-            <progress ref="progress" min="0" max="100" onClick={this.onProgressClick}>
-              0% played
-            </progress>
-            {markers && markers.map((marker, index) => {
-              const {id} = marker;
-              return (
-                <Marker
-                  key={index}
-                  marker={marker}
-                  duration={duration}
-                  onMarkerClick={this.onMarkerClick}
-                />
-              )
-            })}
-          </div>
-          <div className="volume-wrap">
-            <progress ref="volume" min="0" max="100" value={DEFAULT_VOLUME} onClick={this.onVolumeClick}>
-              {DEFAULT_VOLUME}% volume
-            </progress>
-            <button
-              className={muted ? 'no-volume' : 'volume'}
-              onClick={this.onMuteClick}>
-              Volume
-            </button>
-          </div>
-          <button
-            className="full-screen"
-            onClick={this.onFullScreenClick}>
-            FullScreen
-          </button>
-        </div>
+        <Controls
+          ref="controls"
+          isPlaying={isPlaying}
+          currentTime={currentTime}
+          duration={duration}
+          muted={muted}
+          markers={markers}
+          onPlayClick={this.onPlayClick}
+          onPauseClick={this.onPauseClick}
+          onProgressClick={this.onProgressClick}
+          onVolumeClick={this.onVolumeClick}
+          onMuteClick={this.onMuteClick}
+          onFullScreenClick={this.onFullScreenClick}
+          onMarkerClick={this.onMarkerClick}
+        />
       </div>
     );
   }
