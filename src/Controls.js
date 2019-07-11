@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import Marker from './Marker';
-import {DEFAULT_VOLUME} from './index';
 
 class Controls extends Component {
   getTimeCode = secs => {
@@ -19,59 +18,66 @@ class Controls extends Component {
 
   render() {
     const {
-      isPlaying, muted, currentTime, duration, markers, onPlayClick, onPauseClick, onProgressClick, onVolumeClick,
-      onMuteClick, onFullScreenClick, onMarkerClick
+      controls, isPlaying, volume, muted, currentTime, duration, markers,
+      onPlayClick, onPauseClick, onProgressClick, onVolumeClick, onMuteClick, onFullScreenClick, onMarkerClick
     } = this.props;
     const durationTimeCode = this.getTimeCode(Math.ceil(duration));
     const currentTimeCode = currentTime !== duration ? this.getTimeCode(currentTime) : durationTimeCode;
 
     return (
       <div className="react-video-controls">
-        <button
-          className={isPlaying ? 'pause' : 'play'}
-          onClick={isPlaying ? onPauseClick : onPlayClick}>
-          {isPlaying ? 'Pause' : 'Play'}
-        </button>
-        <div className="time">
-          {currentTimeCode}/{durationTimeCode}
-        </div>
-        <div className="progress-wrap" ref="progressWrap">
-          <progress ref="progress" min="0" max="100" onClick={onProgressClick}>
-            0% played
-          </progress>
-          {markers && markers.map((marker, index) => {
-            return (
-              <Marker
-                key={index}
-                marker={marker}
-                duration={duration}
-                onMarkerClick={onMarkerClick}
-              />
-            )
-          })}
-        </div>
-        <div className="volume-wrap">
-          <progress ref="volume" min="0" max="100" value={DEFAULT_VOLUME} onClick={onVolumeClick}>
-            {DEFAULT_VOLUME}% volume
-          </progress>
+        {controls.includes('play') ?
           <button
-            className={muted ? 'no-volume' : 'volume'}
-            onClick={onMuteClick}>
-            Volume
-          </button>
-        </div>
-        <button
-          className="full-screen"
-          onClick={onFullScreenClick}>
-          FullScreen
-        </button>
+            className={isPlaying ? 'pause' : 'play'}
+            onClick={isPlaying ? onPauseClick : onPlayClick}>
+            {isPlaying ? 'Pause' : 'Play'}
+          </button> : null}
+        {controls.includes('time') ?
+          <div className="time">
+            {currentTimeCode}/{durationTimeCode}
+          </div> : null}
+        {controls.includes('progress') ?
+          <div className="progress-wrap" ref="progressWrap">
+            <progress ref="progress" min="0" max="100" onClick={onProgressClick}>
+              0% played
+            </progress>
+            {markers && markers.map((marker, index) => {
+              return (
+                <Marker
+                  key={index}
+                  marker={marker}
+                  duration={duration}
+                  onMarkerClick={onMarkerClick}
+                />
+              )
+            })}
+          </div> : null}
+        {controls.includes('volume') ?
+          <div className="volume-wrap">
+            <progress ref="volume" min="0" max="100" value={volume * 100} onClick={onVolumeClick}>
+              {volume * 100}% volume
+            </progress>
+            <button
+              className={muted ? 'no-volume' : 'volume'}
+              onClick={onMuteClick}>
+              Volume
+            </button>
+          </div> : null}
+        {controls.includes('full-screen') ?
+          <button
+            className="full-screen"
+            onClick={onFullScreenClick}>
+            FullScreen
+          </button> : null}
       </div>
     );
   }
 }
 
 Controls.propTypes = {
+  controls: PropTypes.array,
   isPlaying: PropTypes.bool,
+  volume: PropTypes.number.isRequired,
   currentTime: PropTypes.number,
   duration: PropTypes.number,
   muted: PropTypes.bool,

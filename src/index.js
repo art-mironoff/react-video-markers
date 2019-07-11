@@ -7,10 +7,9 @@ export const DEFAULT_VOLUME = 70;
 
 /**
  * @namespace this.refs.player
-**/
+ **/
 class VideoPlayer extends PureComponent {
   state = {
-    isPlaying: false,
     currentTime: 0,
     duration: null,
     muted: false,
@@ -21,6 +20,9 @@ class VideoPlayer extends PureComponent {
     const {player} = this.refs;
     player.addEventListener('timeupdate', this.onProgress);
     player.addEventListener('durationchange', this.onDurationLoaded);
+    if (this.props.isPlaying) {
+      player.play();
+    }
   }
 
   componentWillUnmount() {
@@ -37,6 +39,15 @@ class VideoPlayer extends PureComponent {
     return true;
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.isPlaying !== this.state.isPlaying) {
+      nextProps.isPlaying ? this.refs.player.play() : this.refs.player.pause();
+    }
+    if (nextProps.volume !== this.state.volume) {
+      this.setVolume(nextProps.volume);
+    }
+  }
+
   seekToPlayer = () => {
     const {player} = this.refs;
     const {timeCodeStart} = this.props;
@@ -46,20 +57,22 @@ class VideoPlayer extends PureComponent {
   };
 
   onPlayerClick = () => {
-    const {isPlaying} = this.state;
+    const {isPlaying, onPlay, onPause} = this.props;
     if (isPlaying) {
-      this.onPauseClick()
+      onPause()
     } else {
-      this.onPlayClick()
+      onPlay()
     }
   };
 
   onDurationLoaded = (e) => {
     const {duration} = e.currentTarget;
     this.setState({duration});
+    this.props.onDuration(duration);
   };
 
   onProgress = (e) => {
+    const {onPause, onProgress} = this.props;
     const {currentTime, duration} = e.currentTarget;
     if (duration) {
       this.setState({currentTime});
@@ -68,19 +81,10 @@ class VideoPlayer extends PureComponent {
       progress.value = percentage;
       progress.innerHTML = percentage + '% played';
       if (currentTime === duration) {
-        this.onPauseClick();
+        onPause();
       }
     }
-  };
-
-  onPlayClick = () => {
-    this.setState({isPlaying: true});
-    this.refs.player.play();
-  };
-
-  onPauseClick = () => {
-    this.setState({isPlaying: false});
-    this.refs.player.pause();
+    onProgress(e);
   };
 
   onProgressClick = e => {
@@ -92,22 +96,19 @@ class VideoPlayer extends PureComponent {
   };
 
   onVolumeClick = e => {
-    const {player} = this.refs;
-    const {volume} = this.refs.controls.refs;
+    const {player, controls} = this.refs;
+    const {volume} = controls.refs;
     const y = volume.offsetWidth - (e.clientY - volume.getBoundingClientRect().top + document.body.scrollTop);
     const percentage = y * volume.max / volume.offsetWidth;
-    this.setVolume(percentage);
     player.muted = false;
+    this.props.onVolume(percentage / 100);
   };
 
-  setVolume = percentage => {
+  setVolume = value => {
     const {player} = this.refs;
-    const {volume} = this.refs.controls.refs;
-    player.volume = percentage / 100;
-    volume.value = percentage;
-    volume.innerHTML = percentage + '% volume';
+    player.volume = value;
     this.setState({
-      muted: !percentage
+      muted: !value
     });
   };
 
@@ -162,11 +163,16 @@ class VideoPlayer extends PureComponent {
   };
 
   render() {
-    const {url, markers} = this.props;
-    const {isPlaying, currentTime, duration, muted, isFullScreen} = this.state;
+    const {url, controls, isPlaying, volume, loop, markers, height, width, onPlay, onPause} = this.props;
+    const {currentTime, duration, muted, isFullScreen} = this.state;
     return (
-      <div className="react-video-wrap">
-        <video className="react-video-player" ref="player" onProgress={this.onProgress} onClick={this.onPlayerClick}>
+      <div className="react-video-wrap" style={{height, width}}>
+        <video
+          ref="player"
+          className="react-video-player"
+          loop={loop}
+          onProgress={this.onProgress}
+          onClick={this.onPlayerClick}>
           <source src={url} type="video/mp4"/>
         </video>
         {isFullScreen ?
@@ -178,13 +184,15 @@ class VideoPlayer extends PureComponent {
         }
         <Controls
           ref="controls"
+          controls={controls}
           isPlaying={isPlaying}
+          volume={volume}
           currentTime={currentTime}
           duration={duration}
           muted={muted}
           markers={markers}
-          onPlayClick={this.onPlayClick}
-          onPauseClick={this.onPauseClick}
+          onPlayClick={onPlay}
+          onPauseClick={onPause}
           onProgressClick={this.onProgressClick}
           onVolumeClick={this.onVolumeClick}
           onMuteClick={this.onMuteClick}
@@ -197,10 +205,34 @@ class VideoPlayer extends PureComponent {
 }
 
 VideoPlayer.propTypes = {
-  url: PropTypes.string.isRequired,
-  timeCodeStart: PropTypes.string,
+  controls: PropTypes.array,
+  height: PropTypes.string,
+  isPlaying: PropTypes.bool.isRequired,
+  volume: PropTypes.number.isRequired,
+  loop: PropTypes.bool,
   markers: PropTypes.array,
+  timeCodeStart: PropTypes.string,
+  url: PropTypes.string.isRequired,
+  width: PropTypes.string,
+  onPlay: PropTypes.func,
+  onPause: PropTypes.func,
+  onVolume: PropTypes.func,
+  onProgress: PropTypes.func,
+  onDuration: PropTypes.func,
   onMarkerClick: PropTypes.func
+};
+
+VideoPlayer.defaultProps = {
+  controls: ['play', 'time', 'progress', 'volume', 'full-screen'],
+  height: '360px',
+  width: '640px',
+  volume: 0.7,
+  onPlay: () => {},
+  onPause: () => {},
+  onVolume: () => {},
+  onProgress: () => {},
+  onDuration: () => {},
+  onMarkerClick: () => {}
 };
 
 export default VideoPlayer;
