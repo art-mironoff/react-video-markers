@@ -26,7 +26,7 @@ class VideoPlayer extends PureComponent {
   componentWillUnmount() {
     const {player} = this.refs;
     player.removeEventListener('timeupdate', this.onProgress);
-    player.removeEventListener('timeupdate', this.onDurationLoaded);
+    player.removeEventListener('durationchange', this.onDurationLoaded);
   }
 
   componentDidUpdate(prevProps) {
