@@ -7,7 +7,8 @@ class App extends React.Component {
     url: 'https://download.blender.org/durian/trailer/sintel_trailer-720p.mp4',
     controls: ['play', 'time', 'progress', 'volume', 'full-screen'],
     isPlaying: false,
-    volume: 0.7
+    volume: 0.7,
+    timeStart: 5
   }
 
   controls = [{
@@ -63,7 +64,7 @@ class App extends React.Component {
   }
 
   render() {
-    const {url, controls, isPlaying, volume} = this.state;
+    const {url, controls, isPlaying, volume, timeStart} = this.state;
 
     const markers = [{
       id: 1,
@@ -88,6 +89,7 @@ class App extends React.Component {
           markers={markers}
           height={'360px'}
           width={'640px'}
+          timeStart={timeStart}
           onPlay={this.handlePlay}
           onPause={this.handlePause}
           onVolume={this.handleVolume}
@@ -124,6 +126,7 @@ class App extends React.Component {
           <p>conrols: {controls.length ? '["' : ''}{controls.join('", "')}{controls.length ? '"]' : ''}</p>
           <p>isPlaying: {isPlaying.toString()}</p>
           <p>volume: {volume}</p>
+          <p>timeStart: {timeStart}</p>
         </div>
       </div>
     );

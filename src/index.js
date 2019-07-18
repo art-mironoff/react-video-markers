@@ -17,10 +17,14 @@ class VideoPlayer extends PureComponent {
   };
 
   componentDidMount() {
+    const {timeStart, isPlaying} = this.props;
     const {player} = this.refs;
     player.addEventListener('timeupdate', this.onProgress);
     player.addEventListener('durationchange', this.onDurationLoaded);
-    if (this.props.isPlaying) {
+    if (timeStart) {
+      this.seekToPlayer();
+    }
+    if (isPlaying) {
       player.play();
     }
   }
@@ -32,8 +36,8 @@ class VideoPlayer extends PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    const {timeCodeStart} = this.props;
-    if (prevProps.timeCodeStart !== timeCodeStart) {
+    const {timeStart} = this.props;
+    if (prevProps.timeStart !== timeStart) {
       this.seekToPlayer();
     }
     return true;
@@ -50,9 +54,9 @@ class VideoPlayer extends PureComponent {
 
   seekToPlayer = () => {
     const {player} = this.refs;
-    const {timeCodeStart} = this.props;
-    if (timeCodeStart && player) {
-      player.currentTime = timeCodeStart;
+    const {timeStart} = this.props;
+    if (timeStart && player) {
+      player.currentTime = timeStart;
     }
   };
 
@@ -211,7 +215,7 @@ VideoPlayer.propTypes = {
   volume: PropTypes.number.isRequired,
   loop: PropTypes.bool,
   markers: PropTypes.array,
-  timeCodeStart: PropTypes.string,
+  timeStart: PropTypes.number,
   url: PropTypes.string.isRequired,
   width: PropTypes.string,
   onPlay: PropTypes.func,
@@ -226,7 +230,11 @@ VideoPlayer.defaultProps = {
   controls: ['play', 'time', 'progress', 'volume', 'full-screen'],
   height: '360px',
   width: '640px',
+  isPlaying: false,
   volume: 0.7,
+  loop: false,
+  markers: [],
+  timeCodeStart: 0,
   onPlay: () => {},
   onPause: () => {},
   onVolume: () => {},
