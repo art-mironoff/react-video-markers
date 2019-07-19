@@ -2,12 +2,9 @@
   "name": "react-video-markers",
   "version": "1.0.0",
   "description": "React HTML5 video player with markers",
+  "author": "Arthur Mironov (arthur.mironoff@gmail.com)",
+  "license": "MIT",
   "main": "dist/index.js",
-  "scripts": {
-    "start": "NODE_ENV=development node server.js",
-    "build-example": "webpack",
-    "build-prod": "NODE_ENV=production webpack --config webpack.prod.config.js"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/art-mironoff/react-video-markers.git"
@@ -19,8 +16,6 @@
     "markers",
     "html5"
   ],
-  "author": "Arthur Mironov (arthur.mironoff@gmail.com)",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/art-mironoff/react-video-markers/issues"
   },
@@ -47,5 +42,10 @@
     "webpack": "^4.36.1",
     "webpack-cli": "^3.3.6",
     "webpack-dev-server": "^3.7.2"
+  },
+  "scripts": {
+    "start": "NODE_ENV=development node server.js",
+    "build-example": "webpack",
+    "build-prod": "NODE_ENV=production webpack --config webpack.prod.config.js"
   }
 }
