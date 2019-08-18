@@ -4,7 +4,7 @@ import './styles.css';
 
 class App extends React.Component {
   state = {
-    url: 'https://download.blender.org/durian/trailer/sintel_trailer-720p.mp4',
+    url: 'https://media.w3.org/2010/05/sintel/trailer_hd.mp4',
     controls: ['play', 'time', 'progress', 'volume', 'full-screen'],
     isPlaying: false,
     volume: 0.7,
