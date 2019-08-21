@@ -1,17 +1,15 @@
-import React from 'react';
+import React, {useState} from 'react';
 import VideoPlayer from '../src/index.js';
 import './styles.css';
 
-class App extends React.Component {
-  state = {
-    url: 'https://media.w3.org/2010/05/sintel/trailer_hd.mp4',
-    controls: ['play', 'time', 'progress', 'volume', 'full-screen'],
-    isPlaying: false,
-    volume: 0.7,
-    timeStart: 5
-  }
+function App() {
+  const [url] = useState('https://media.w3.org/2010/05/sintel/trailer_hd.mp4');
+  const [controls, setControls] = useState(['play', 'time', 'progress', 'volume', 'full-screen']);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [volume, setVolume] = useState(0.7);
+  const [timeStart] = useState(5);
 
-  controls = [{
+  const controlsList = [{
     id: 'play',
     title: 'Play button'
   }, {
@@ -28,109 +26,105 @@ class App extends React.Component {
     title: 'Full Screen'
   }];
 
-  handlePlay = () => {
-    this.setState({isPlaying: true});
+  const handlePlay = () => {
+    setIsPlaying(true);
   };
 
-  handlePause = () => {
-    this.setState({isPlaying: false});
+  const handlePause = () => {
+    setIsPlaying(false);
   };
 
-  handleControlToggle = event => {
-    let controls = [...this.state.controls];
+  const handleControlToggle = event => {
+    let result = [...controls];
     const name = event.target.id;
-    if (controls.includes(name)) {
-      controls = controls.filter(item => item !== name);
+    if (result.includes(name)) {
+      result = result.filter(item => item !== name);
     } else {
-      controls.push(name);
+      result.push(name);
     }
-    this.setState({controls});
+    setControls(result);
   };
 
-  handleVolume = value => {
-    this.setState({volume: value});
+  const handleVolume = value => {
+    setVolume(value);
   };
 
-  handleProgress(e) {
+  const handleProgress = e => {
     console.log('Current time: ', e.target.currentTime);
-  }
+  };
 
-  handleDuration(duration) {
+  const handleDuration = duration => {
     console.log('Duration: ', duration);
-  }
+  };
 
-  handleMarkerClick(marker) {
+  const handleMarkerClick = marker => {
     alert(`Marker ${marker.id} clicked!`);
-  }
+  };
 
-  render() {
-    const {url, controls, isPlaying, volume, timeStart} = this.state;
+  const markers = [{
+    id: 1,
+    time: 5,
+    color: '#ffc837',
+    title: 'Marker 1'
+  }, {
+    id: 2,
+    time: 10,
+    color: '#ffc837',
+    title: 'Marker 2'
+  }];
 
-    const markers = [{
-      id: 1,
-      time: 5,
-      color: '#ffc837',
-      title: 'Marker 1'
-    }, {
-      id: 2,
-      time: 10,
-      color: '#ffc837',
-      title: 'Marker 2'
-    }];
-
-    return (
-      <div className="container">
-        <VideoPlayer
-          url={url}
-          controls={controls}
-          isPlaying={isPlaying}
-          volume={volume}
-          loop={true}
-          markers={markers}
-          height={'360px'}
-          width={'640px'}
-          timeStart={timeStart}
-          onPlay={this.handlePlay}
-          onPause={this.handlePause}
-          onVolume={this.handleVolume}
-          onProgress={this.handleProgress}
-          onDuration={this.handleDuration}
-          onMarkerClick={this.handleMarkerClick}
-        />
-        <div className="controls">
-          <p>
-            Controls:
-            <button onClick={isPlaying ? this.handlePause : this.handlePlay}>
-              {isPlaying ? 'Pause' : 'Play'}
-            </button>
-          </p>
-          <p>
-            Show controls:
-            {this.controls.map(control => {
-              return (
-                <label key={control.id} htmlFor={control.id}>
-                  <input
-                    id={control.id}
-                    type="checkbox"
-                    checked={controls.includes(control.id)}
-                    onChange={this.handleControlToggle}
-                  /> {control.title}
-                </label>
-              );
-            })}
-          </p>
-        </div>
-        <div>
-          <h3>State:</h3>
-          <p>url: {url}</p>
-          <p>conrols: {controls.length ? '["' : ''}{controls.join('", "')}{controls.length ? '"]' : ''}</p>
-          <p>isPlaying: {isPlaying.toString()}</p>
-          <p>volume: {volume}</p>
-          <p>timeStart: {timeStart}</p>
-        </div>
+  return (
+    <div className="container">
+      <VideoPlayer
+        url={url}
+        controls={controls}
+        isPlaying={isPlaying}
+        volume={volume}
+        loop={true}
+        markers={markers}
+        height={'360px'}
+        width={'640px'}
+        timeStart={timeStart}
+        onPlay={handlePlay}
+        onPause={handlePause}
+        onVolume={handleVolume}
+        onProgress={handleProgress}
+        onDuration={handleDuration}
+        onMarkerClick={handleMarkerClick}
+      />
+      <div className="controls">
+        <p>
+          Controls:
+          <button onClick={isPlaying ? handlePause : handlePlay}>
+            {isPlaying ? 'Pause' : 'Play'}
+          </button>
+        </p>
+        <p>
+          Show controls:
+          {controlsList.map(control => {
+            return (
+              <label key={control.id} htmlFor={control.id}>
+                <input
+                  id={control.id}
+                  type="checkbox"
+                  checked={controls.includes(control.id)}
+                  onChange={handleControlToggle}
+                /> {control.title}
+              </label>
+            );
+          })}
+        </p>
       </div>
-    );
-  }
+      <div>
+        <h3>State:</h3>
+        <p>url: {url}</p>
+        <p>conrols: {controls.length ? '["' : ''}{controls.join('", "')}{controls.length ? '"]' : ''}</p>
+        <p>isPlaying: {isPlaying.toString()}</p>
+        <p>volume: {volume}</p>
+        <p>timeStart: {timeStart}</p>
+      </div>
+    </div>
+  );
 }
 
 export default App;

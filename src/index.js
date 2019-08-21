@@ -1,64 +1,77 @@
-import React, {PureComponent} from 'react';
-import PropTypes from 'prop-types';
+import React, {useState, useEffect, useRef} from 'react';
 import Controls from './Controls';
 import './styles.css';
 
-export const DEFAULT_VOLUME = 70;
+const DEFAULT_VOLUME = 0.7;
 
-/**
- * @namespace this.refs.player
- **/
-class VideoPlayer extends PureComponent {
-  state = {
-    currentTime: 0,
-    duration: null,
-    muted: false,
-    isFullScreen: false
-  };
+function VideoPlayer(props) {
+  const playerEl = useRef(null);
+  const progressEl = useRef(null);
+  const volumeEl = useRef(null);
 
-  componentDidMount() {
-    const {timeStart, isPlaying} = this.props;
-    const {player} = this.refs;
-    player.addEventListener('timeupdate', this.onProgress);
-    player.addEventListener('durationchange', this.onDurationLoaded);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [videoDuration, setVideoDuration] = useState(null);
+  const [muted, setMuted] = useState(false);
+  const [isFullScreen, setIsFullScreen] =  useState(false);
+
+  const {
+    url,
+    controls = ['play', 'time', 'progress', 'volume', 'full-screen'],
+    height = '360px',
+    width = '640px',
+    isPlaying = false,
+    volume = 0.7,
+    loop = false,
+    markers = [],
+    timeStart = 0,
+    onPlay = () => {},
+    onPause = () => {},
+    onVolume = () => {},
+    onProgress = () => {},
+    onDuration = () => {},
+    onMarkerClick = () => {}
+  } = props;
+
+  useEffect(() => {
+    playerEl.current.addEventListener('timeupdate', handleProgress);
+    playerEl.current.addEventListener('durationchange', handleDurationLoaded);
     if (timeStart) {
-      this.seekToPlayer();
+      seekToPlayer();
     }
     if (isPlaying) {
-      player.play();
+      playerEl.play();
     }
-  }
 
-  componentWillUnmount() {
-    const {player} = this.refs;
-    player.removeEventListener('timeupdate', this.onProgress);
-    player.removeEventListener('durationchange', this.onDurationLoaded);
-  }
+    return () => {
+      playerEl.current.removeEventListener('timeupdate', handleProgress);
+      playerEl.current.removeEventListener('durationchange', handleDurationLoaded);
+    }
+  }, []);
 
-  componentDidUpdate(prevProps) {
-    const {timeStart, isPlaying, volume} = this.props;
-    if (prevProps.timeStart !== timeStart) {
-      this.seekToPlayer();
-    }
-    if (isPlaying !== this.state.isPlaying) {
-      isPlaying ? this.refs.player.play() : this.refs.player.pause();
-    }
-    if (volume !== this.state.volume) {
-      this.setVolume(volume);
-    }
-    return true;
-  }
+  useEffect(() => {
+    seekToPlayer();
+  }, [timeStart]);
 
-  seekToPlayer = () => {
-    const {player} = this.refs;
-    const {timeStart} = this.props;
-    if (timeStart && player) {
-      player.currentTime = timeStart;
+  useEffect(() => {
+    isPlaying ? playerEl.current.play() : playerEl.current.pause();
+  }, [isPlaying]);
+
+  useEffect(() => {
+    setVolume(volume);
+  }, [volume]);
+
+  const seekToPlayer = () => {
+    if (timeStart && playerEl) {
+      playerEl.current.currentTime = timeStart;
     }
   };
 
-  onPlayerClick = () => {
-    const {isPlaying, onPlay, onPause} = this.props;
+  const setVolume = value => {
+    playerEl.current.volume = value;
+    setMuted(!value);
+  };
+
+  const handlePlayerClick = () => {
     if (isPlaying) {
       onPause()
     } else {
@@ -66,21 +79,19 @@ class VideoPlayer extends PureComponent {
     }
   };
 
-  onDurationLoaded = (e) => {
+  const handleDurationLoaded = (e) => {
     const {duration} = e.currentTarget;
-    this.setState({duration});
-    this.props.onDuration(duration);
+    setVideoDuration(duration);
+    onDuration(duration);
   };
 
-  onProgress = (e) => {
-    const {onPause, onProgress} = this.props;
+  const handleProgress = (e) => {
     const {currentTime, duration} = e.currentTarget;
     if (duration) {
-      this.setState({currentTime});
-      const {progress} = this.refs.controls.refs;
+      setCurrentTime(currentTime);
       const percentage = (100 / duration) * currentTime;
-      progress.value = percentage;
-      progress.innerHTML = percentage + '% played';
+      progressEl.current.value = percentage;
+      progressEl.current.innerHTML = percentage + '% played';
       if (currentTime === duration) {
         onPause();
       }
@@ -88,47 +99,32 @@ class VideoPlayer extends PureComponent {
     onProgress(e);
   };
 
-  onProgressClick = e => {
-    const {player} = this.refs;
-    const {progress} = this.refs.controls.refs;
-    const x = e.clientX - progress.getBoundingClientRect().left + document.body.scrollLeft;
-    const percentage = x * progress.max / progress.offsetWidth;
-    player.currentTime = percentage / 100 * player.duration;
+  const handleProgressClick = e => {
+    const x = e.clientX - progressEl.current.getBoundingClientRect().left + document.body.scrollLeft;
+    const percentage = x * progressEl.current.max / progressEl.current.offsetWidth;
+    playerEl.current.currentTime = percentage / 100 * playerEl.current.duration;
   };
 
-  onVolumeClick = e => {
-    const {player, controls} = this.refs;
-    const {volume} = controls.refs;
-    const y = volume.offsetWidth - (e.clientY - volume.getBoundingClientRect().top + document.body.scrollTop);
-    const percentage = y * volume.max / volume.offsetWidth;
-    player.muted = false;
-    this.props.onVolume(percentage / 100);
+  const handleVolumeClick = e => {
+    const y = volumeEl.current.offsetWidth - (e.clientY - volumeEl.current.getBoundingClientRect().top + document.body.scrollTop);
+    const percentage = y * volumeEl.current.max / volumeEl.current.offsetWidth;
+    playerEl.current.muted = false;
+    onVolume(percentage / 100);
   };
 
-  setVolume = value => {
-    const {player} = this.refs;
-    player.volume = value;
-    this.setState({
-      muted: !value
-    });
-  };
-
-  onMuteClick = () => {
-    const {muted} = this.state;
-    const {player} = this.refs;
+  const handleMuteClick = () => {
     if (muted) {
-      player.muted = false;
-      this.setVolume(DEFAULT_VOLUME);
-      this.setState({muted: false});
+      playerEl.current.muted = false;
+      setVolume(DEFAULT_VOLUME);
+      setMuted(false);
     } else {
-      player.muted = true;
-      this.setVolume(0);
-      this.setState({muted: true});
+      playerEl.current.muted = true;
+      setVolume(0);
+      setMuted(true);
     }
   };
 
-  onFullScreenClick = () => {
-    const {isFullScreen} = this.state;
+  const handleFullScreenClick = () => {
     const videoWrap = document.getElementsByClassName('react-video-wrap')[0];
     if (isFullScreen) {
       document.body.classList.remove('react-video-full-screen');
@@ -143,7 +139,7 @@ class VideoPlayer extends PureComponent {
       }
     } else {
       document.body.classList.add('react-video-full-screen');
-      if(videoWrap.requestFullscreen) {
+      if (videoWrap.requestFullscreen) {
         videoWrap.requestFullscreen();
       } else if(videoWrap.mozRequestFullScreen) {
         videoWrap.mozRequestFullScreen();
@@ -153,91 +149,51 @@ class VideoPlayer extends PureComponent {
         videoWrap.msRequestFullscreen();
       }
     }
-    this.setState({isFullScreen: !isFullScreen});
+    setIsFullScreen(!isFullScreen);
   };
 
-  onMarkerClick = marker => {
-    const {onMarkerClick} = this.props;
-    const {player} = this.refs;
-    player.currentTime = marker['time'];
+  const handleMarkerClick = marker => {
+    playerEl.current.currentTime = marker['time'];
     onMarkerClick(marker);
   };
 
-  render() {
-    const {url, controls, isPlaying, volume, loop, markers, height, width, onPlay, onPause} = this.props;
-    const {currentTime, duration, muted, isFullScreen} = this.state;
-    return (
-      <div className="react-video-wrap" style={{height, width}}>
-        <video
-          ref="player"
-          className="react-video-player"
-          loop={loop}
-          onProgress={this.onProgress}
-          onClick={this.onPlayerClick}>
-          <source src={url} type="video/mp4"/>
-        </video>
-        {isFullScreen ?
-          <button
-            className="react-video-close"
-            onClick={this.onFullScreenClick}>
-            Close video
-          </button> : null
-        }
-        <Controls
-          ref="controls"
-          controls={controls}
-          isPlaying={isPlaying}
-          volume={volume}
-          currentTime={currentTime}
-          duration={duration}
-          muted={muted}
-          markers={markers}
-          onPlayClick={onPlay}
-          onPauseClick={onPause}
-          onProgressClick={this.onProgressClick}
-          onVolumeClick={this.onVolumeClick}
-          onMuteClick={this.onMuteClick}
-          onFullScreenClick={this.onFullScreenClick}
-          onMarkerClick={this.onMarkerClick}
-        />
-      </div>
-    );
-  }
+  return (
+    <div className="react-video-wrap" style={{height, width}}>
+      <video
+        ref={playerEl}
+        className="react-video-player"
+        loop={loop}
+        onProgress={onProgress}
+        onClick={handlePlayerClick}>
+        <source src={url} type="video/mp4"/>
+      </video>
+      {isFullScreen ?
+        <button
+          className="react-video-close"
+          onClick={handleFullScreenClick}>
+          Close video
+        </button> : null
+      }
+      <Controls
+        progressEl={progressEl}
+        volumeEl={volumeEl}
+        controls={controls}
+        isPlaying={isPlaying}
+        volume={volume}
+        currentTime={currentTime}
+        duration={videoDuration}
+        muted={muted}
+        markers={markers}
+        onPlayClick={onPlay}
+        onPauseClick={onPause}
+        onProgressClick={handleProgressClick}
+        onVolumeClick={handleVolumeClick}
+        onMuteClick={handleMuteClick}
+        onFullScreenClick={handleFullScreenClick}
+        onMarkerClick={handleMarkerClick}
+      />
+    </div>
+  );
 }
-
-VideoPlayer.propTypes = {
-  controls: PropTypes.array,
-  height: PropTypes.string,
-  isPlaying: PropTypes.bool.isRequired,
-  volume: PropTypes.number.isRequired,
-  loop: PropTypes.bool,
-  markers: PropTypes.array,
-  timeStart: PropTypes.number,
-  url: PropTypes.string.isRequired,
-  width: PropTypes.string,
-  onPlay: PropTypes.func,
-  onPause: PropTypes.func,
-  onVolume: PropTypes.func,
-  onProgress: PropTypes.func,
-  onDuration: PropTypes.func,
-  onMarkerClick: PropTypes.func
-};
-
-VideoPlayer.defaultProps = {
-  controls: ['play', 'time', 'progress', 'volume', 'full-screen'],
-  height: '360px',
-  width: '640px',
-  isPlaying: false,
-  volume: 0.7,
-  loop: false,
-  markers: [],
-  timeCodeStart: 0,
-  onPlay: () => {},
-  onPause: () => {},
-  onVolume: () => {},
-  onProgress: () => {},
-  onDuration: () => {},
-  onMarkerClick: () => {}
-};
 
 export default VideoPlayer;
