@@ -1,11 +1,11 @@
 const pkg = require('./package.json');
 const path = require('path');
-const libraryName= pkg.name;
+const libraryName = pkg.name;
 
 module.exports = {
   devtool: 'sourcemap',
   entry: {
-    index: './src/index.js',
+    index: './src/index.tsx'
   },
   output: {
     path: path.join(__dirname, 'dist'),
@@ -17,29 +17,31 @@ module.exports = {
   },
   mode: 'production',
   module: {
-    rules: [{
-      test: /\.(js|jsx)/,
-      loader: 'babel-loader'
-    }, {
-      test: /\.css$/i,
-      use: ['style-loader', 'css-loader'],
-    }, {
-      test: /\.(jpe?g|png|gif|svg)$/i,
-      use: [
-        'url-loader'
-      ]
-    }]
+    rules: [
+      {
+        test: /\.ts|.tsx|.js?$/,
+        loader: 'babel-loader'
+      },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader']
+      },
+      {
+        test: /\.(jpe?g|png|gif|svg)$/i,
+        use: ['url-loader']
+      }
+    ]
   },
   plugins: [],
   resolve: {
-    extensions: ['.js', '.jsx']
+    extensions: ['.ts', '.tsx', '.js', '.jsx']
   },
   externals: {
-    'react': {
+    react: {
       root: 'React',
       commonjs2: 'react',
       commonjs: 'react',
       amd: 'react'
-    },
-  },
+    }
+  }
 };

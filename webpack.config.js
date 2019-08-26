@@ -1,7 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 
-let entry = ['./example/index.js'];
+let entry = ['./example/index.tsx'];
 
 if (process.env.NODE_ENV === 'development') {
   entry = entry.concat([
@@ -23,22 +23,24 @@ module.exports = {
     new webpack.NoEmitOnErrorsPlugin()
   ],
   resolve: {
-    extensions: ['.js', '.jsx']
+    extensions: ['.ts', '.tsx', '.js', '.jsx']
   },
   mode: 'development',
   module: {
-    rules: [{
-      test: /\.js?$/,
-      exclude: /dist|lib|node_modules/,
-      loaders: ['react-hot-loader/webpack', 'babel-loader']
-    }, {
-      test: /\.css$/i,
-      use: ['style-loader', 'css-loader'],
-    }, {
-      test: /\.(jpe?g|png|gif|svg)$/i,
-      use: [
-        'url-loader'
-      ]
-    }]
+    rules: [
+      {
+        test: /\.ts|.tsx|.js?$/,
+        exclude: /dist|lib|node_modules/,
+        loaders: ['react-hot-loader/webpack', 'babel-loader']
+      },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader']
+      },
+      {
+        test: /\.(jpe?g|png|gif|svg)$/i,
+        use: ['url-loader']
+      }
+    ]
   }
 };

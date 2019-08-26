@@ -1,30 +1,42 @@
-import React, {useState} from 'react';
-import VideoPlayer from '../src/index.js';
+import React, { useState } from 'react';
+import VideoPlayer from '../src/index';
 import './styles.css';
 
 function App() {
   const [url] = useState('https://media.w3.org/2010/05/sintel/trailer_hd.mp4');
-  const [controls, setControls] = useState(['play', 'time', 'progress', 'volume', 'full-screen']);
+  const [controls, setControls] = useState([
+    'play',
+    'time',
+    'progress',
+    'volume',
+    'full-screen'
+  ]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(0.7);
   const [timeStart] = useState(5);
 
-  const controlsList = [{
-    id: 'play',
-    title: 'Play button'
-  }, {
-    id: 'time',
-    title: 'Time'
-  }, {
-    id: 'progress',
-    title: 'Progress'
-  }, {
-    id: 'volume',
-    title: 'Volume'
-  }, {
-    id: 'full-screen',
-    title: 'Full Screen'
-  }];
+  const controlsList = [
+    {
+      id: 'play',
+      title: 'Play button'
+    },
+    {
+      id: 'time',
+      title: 'Time'
+    },
+    {
+      id: 'progress',
+      title: 'Progress'
+    },
+    {
+      id: 'volume',
+      title: 'Volume'
+    },
+    {
+      id: 'full-screen',
+      title: 'Full Screen'
+    }
+  ];
 
   const handlePlay = () => {
     setIsPlaying(true);
@@ -61,17 +73,20 @@ function App() {
     alert(`Marker ${marker.id} clicked!`);
   };
 
-  const markers = [{
-    id: 1,
-    time: 5,
-    color: '#ffc837',
-    title: 'Marker 1'
-  }, {
-    id: 2,
-    time: 10,
-    color: '#ffc837',
-    title: 'Marker 2'
-  }];
+  const markers = [
+    {
+      id: 1,
+      time: 5,
+      color: '#ffc837',
+      title: 'Marker 1'
+    },
+    {
+      id: 2,
+      time: 10,
+      color: '#ffc837',
+      title: 'Marker 2'
+    }
+  ];
 
   return (
     <div className="container">
@@ -109,7 +124,8 @@ function App() {
                   type="checkbox"
                   checked={controls.includes(control.id)}
                   onChange={handleControlToggle}
-                /> {control.title}
+                />{' '}
+                {control.title}
               </label>
             );
           })}
@@ -118,7 +134,11 @@ function App() {
       <div>
         <h3>State:</h3>
         <p>url: {url}</p>
-        <p>conrols: {controls.length ? '["' : ''}{controls.join('", "')}{controls.length ? '"]' : ''}</p>
+        <p>
+          controls: {controls.length ? '["' : ''}
+          {controls.join('", "')}
+          {controls.length ? '"]' : ''}
+        </p>
         <p>isPlaying: {isPlaying.toString()}</p>
         <p>volume: {volume}</p>
         <p>timeStart: {timeStart}</p>
