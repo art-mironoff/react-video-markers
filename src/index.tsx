@@ -205,24 +205,26 @@ function VideoPlayer(props: IProps) {
           Close video
         </button>
       ) : null}
-      <Controls
-        progressEl={progressEl}
-        volumeEl={volumeEl}
-        controls={controls}
-        isPlaying={isPlaying}
-        volume={volume}
-        currentTime={currentTime}
-        duration={videoDuration}
-        muted={muted}
-        markers={markers}
-        onPlayClick={onPlay}
-        onPauseClick={onPause}
-        onProgressClick={handleProgressClick}
-        onVolumeClick={handleVolumeClick}
-        onMuteClick={handleMuteClick}
-        onFullScreenClick={handleFullScreenClick}
-        onMarkerClick={handleMarkerClick}
-      />
+      {controls.length ? (
+        <Controls
+          progressEl={progressEl}
+          volumeEl={volumeEl}
+          controls={controls}
+          isPlaying={isPlaying}
+          volume={volume}
+          currentTime={currentTime}
+          duration={videoDuration}
+          muted={muted}
+          markers={markers}
+          onPlayClick={onPlay}
+          onPauseClick={onPause}
+          onProgressClick={handleProgressClick}
+          onVolumeClick={handleVolumeClick}
+          onMuteClick={handleMuteClick}
+          onFullScreenClick={handleFullScreenClick}
+          onMarkerClick={handleMarkerClick}
+        />
+      ) : null}
     </div>
   );
 }
