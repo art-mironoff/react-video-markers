@@ -101,7 +101,10 @@ function VideoPlayer(props: IProps) {
   };
 
   const handleDurationLoaded = (e: Event) => {
-    const duration = e.currentTarget['duration'];
+    let duration = e.currentTarget['duration'];
+    if (duration === Infinity) {
+        duration = 0;
+    }
     setVideoDuration(duration);
     onDuration(duration);
   };
