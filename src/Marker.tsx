@@ -1,14 +1,28 @@
 import React from 'react';
 
 interface IProps {
-  marker: object;
+  marker: {
+    id: number,
+    time: number,
+    color: string,
+    title: string
+  };
   duration: number;
   onMarkerClick: (marker: object) => void;
 }
 
-function Marker(props) {
+function Marker(props: IProps) {
   const { marker, duration, onMarkerClick } = props;
-  const { id, time, color, title } = marker;
+  const { time, color, title } = marker;
+  const id = String(marker.id);
+
+  const getPosition = () => {
+    if (duration) {
+        const percent = (time <= duration) ? time / duration : 1;
+        return `calc(${percent * 100}% - 2px)`;
+    }
+    return '-9999px';
+  };
 
   return (
     <i
@@ -17,7 +31,7 @@ function Marker(props) {
       title={title}
       style={{
         background: color,
-        left: duration ? `calc(${(time / duration) * 100}% - 2px)` : '-9999px'
+        left: getPosition()
       }}
       onClick={() => {
         onMarkerClick(marker);
