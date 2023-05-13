@@ -61,11 +61,11 @@ function VideoPlayer(props: IProps) {
     }
 
     return () => {
-      playerEl.current.removeEventListener('timeupdate', handleProgress);
-      playerEl.current.removeEventListener(
-        'durationchange',
-        handleDurationLoaded
-      );
+     playerEl.current?.removeEventListener('timeupdate', handleProgress);
+     playerEl.current?.removeEventListener(
+       'durationchange',
+      handleDurationLoaded
+     );
     };
   }, []);
 
