@@ -56,6 +56,13 @@
   width: 17px;
 }
 
+.react-video-controls .download {
+  background-image: url('./images/download.svg');
+  background-size: 18px 18px; /* exact SVG size */
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
 .react-video-controls .full-screen {
   background-image: url('./images/full-screen-black.svg');
   width: 17px;
