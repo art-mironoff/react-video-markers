@@ -18,6 +18,7 @@ interface IProps {
   onMuteClick: () => void;
   onFullScreenClick: () => void;
   onMarkerClick: () => void;
+  onDownload: () => void;
 }
 
 function Controls(props) {
@@ -37,7 +38,8 @@ function Controls(props) {
     onVolumeClick,
     onMuteClick,
     onFullScreenClick,
-    onMarkerClick
+    onMarkerClick,
+    onDownload,
   } = props;
 
   const getTimeCode = (secs: number): string => {
@@ -118,6 +120,11 @@ function Controls(props) {
             Volume
           </button>
         </div>
+      ) : null}
+       {controls.includes('download') ? (
+        <button className="download" onClick={onDownload}>
+          Download
+        </button>
       ) : null}
       {controls.includes('full-screen') ? (
         <button className="full-screen" onClick={onFullScreenClick}>

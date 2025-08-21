@@ -9,7 +9,8 @@ function App() {
     'time',
     'progress',
     'volume',
-    'full-screen'
+    'full-screen',
+    'download',
   ]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(0.7);
@@ -73,6 +74,10 @@ function App() {
     alert(`Marker ${marker.id} clicked!`);
   };
 
+  const handleDownload = () => {
+    alert(`Downloading ${url}!`);
+  };
+
   const markers = [
     {
       id: 1,
@@ -106,6 +111,7 @@ function App() {
         onProgress={handleProgress}
         onDuration={handleDuration}
         onMarkerClick={handleMarkerClick}
+        onDownload={handleDownload}
       />
       <div className="controls">
         <p>

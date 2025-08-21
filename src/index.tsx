@@ -18,6 +18,7 @@ interface IProps {
   onProgress?: (event: Event) => void;
   onDuration?: (duration: number) => void;
   onMarkerClick?: (marker: object) => void;
+  onDownload?: () => void;
 }
 
 const DEFAULT_VOLUME: number = 0.7;
@@ -47,17 +48,18 @@ function VideoPlayer(props: IProps) {
     onVolume = () => {},
     onProgress = () => {},
     onDuration = () => {},
-    onMarkerClick = () => {}
+    onMarkerClick = () => {},
+    onDownload = () => {},
   } = props;
 
   useEffect(() => {
-    playerEl.current.addEventListener('timeupdate', handleProgress);
-    playerEl.current.addEventListener('durationchange', handleDurationLoaded);
+    playerEl.current?.addEventListener('timeupdate', handleProgress);
+    playerEl.current?.addEventListener('durationchange', handleDurationLoaded);
     if (timeStart) {
       seekToPlayer();
     }
     if (isPlaying) {
-      playerEl.current.play();
+      playerEl.current?.play();
     }
 
     return () => {
@@ -74,7 +76,7 @@ function VideoPlayer(props: IProps) {
   }, [timeStart]);
 
   useEffect(() => {
-    isPlaying ? playerEl.current.play() : playerEl.current.pause();
+    isPlaying ? playerEl.current?.play() : playerEl.current?.pause();
   }, [isPlaying]);
 
   useEffect(() => {
@@ -193,6 +195,10 @@ function VideoPlayer(props: IProps) {
     onMarkerClick(marker);
   };
 
+  const handleDownload = () => {
+    onDownload();
+  }
+
   return (
     <div className="react-video-wrap" style={{ height, width }}>
       <video
@@ -226,6 +232,7 @@ function VideoPlayer(props: IProps) {
           onMuteClick={handleMuteClick}
           onFullScreenClick={handleFullScreenClick}
           onMarkerClick={handleMarkerClick}
+          onDownload={handleDownload}
         />
       ) : null}
     </div>

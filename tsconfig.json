@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "lib": ["dom", "es2020"],
+    "strict": true,
+    "module": "esnext",
+    "jsx": "react"
+  }
+}
