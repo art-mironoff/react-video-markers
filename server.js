@@ -1,18 +1,32 @@
-const webpack = require('webpack');
-const WebpackDevServer = require('webpack-dev-server');
-const config = require('./webpack.config');
+const path = require("path");
+const webpack = require("webpack");
+const WebpackDevServer = require("webpack-dev-server");
+const config = require("./webpack.config");
 
-new WebpackDevServer(webpack(config), {
-  contentBase: config.output.publicPath,
-  hot: true,
-  stats: {
-    chunkModules: false,
-    colors: true,
+const compiler = webpack(config);
+const server = new WebpackDevServer(
+  {
+    static: {
+      directory: path.join(__dirname, "example"),
+    },
+    hot: true,
+    port: 3000,
+    host: "localhost",
+    devMiddleware: {
+      stats: {
+        chunkModules: false,
+        colors: true,
+      },
+    },
   },
-}).listen(3000, 'localhost', function (err) {
-  if (err) {
-    console.log(err);
-  }
+  compiler
+);
 
-  console.log('Listening at localhost:3000');
-});
+server
+  .start()
+  .then(() => {
+    console.log("Listening at localhost:3000");
+  })
+  .catch((err) => {
+    console.error(err);
+  });

@@ -1,5 +1,20 @@
+# Development
 example
+src
 node_modules
+
+# Config files
 webpack.config.js
+webpack.prod.config.js
+jest.config.js
+server.js
+remove.js
 .eslintrc
+
+# IDE & Git
+.idea
 .gitignore
+.git
+
+# Other
+package-lock.json

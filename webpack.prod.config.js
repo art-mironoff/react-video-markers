@@ -3,13 +3,13 @@ const path = require('path');
 const libraryName = pkg.name;
 
 module.exports = {
-  devtool: 'sourcemap',
+  devtool: 'source-map',
   entry: {
     index: './src/index.tsx'
   },
   output: {
     path: path.join(__dirname, 'dist'),
-    publicPath: './dist',
+    publicPath: './',
     filename: 'index.js',
     sourceMapFilename: 'index.map',
     library: libraryName,
@@ -19,7 +19,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.ts|.tsx|.js?$/,
+        test: /\.(ts|tsx|js)$/,
         loader: 'babel-loader'
       },
       {
@@ -28,7 +28,7 @@ module.exports = {
       },
       {
         test: /\.(jpe?g|png|gif|svg)$/i,
-        use: ['url-loader']
+        type: 'asset/resource'
       }
     ]
   },
