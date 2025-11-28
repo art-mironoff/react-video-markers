@@ -28,7 +28,7 @@ function VideoPlayer(props: IProps) {
   const volumeEl = useRef<HTMLProgressElement>(null);
 
   const [currentTime, setCurrentTime] = useState<number>(0);
-  const [videoDuration, setVideoDuration] = useState<number>(null);
+  const [videoDuration, setVideoDuration] = useState<number | null>(null);
   const [muted, setMuted] = useState<boolean>(false);
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
 
@@ -51,21 +51,21 @@ function VideoPlayer(props: IProps) {
   } = props;
 
   useEffect(() => {
-    playerEl.current.addEventListener('timeupdate', handleProgress);
-    playerEl.current.addEventListener('durationchange', handleDurationLoaded);
+    const player = playerEl.current;
+    if (!player) return;
+
+    player.addEventListener('timeupdate', handleProgress);
+    player.addEventListener('durationchange', handleDurationLoaded);
     if (timeStart) {
       seekToPlayer();
     }
     if (isPlaying) {
-      playerEl.current.play();
+      player.play();
     }
 
     return () => {
-      playerEl.current.removeEventListener('timeupdate', handleProgress);
-      playerEl.current.removeEventListener(
-        'durationchange',
-        handleDurationLoaded
-      );
+      player.removeEventListener('timeupdate', handleProgress);
+      player.removeEventListener('durationchange', handleDurationLoaded);
     };
   }, []);
 
@@ -74,7 +74,9 @@ function VideoPlayer(props: IProps) {
   }, [timeStart]);
 
   useEffect(() => {
-    isPlaying ? playerEl.current.play() : playerEl.current.pause();
+    if (playerEl.current) {
+      isPlaying ? playerEl.current.play() : playerEl.current.pause();
+    }
   }, [isPlaying]);
 
   useEffect(() => {
@@ -82,13 +84,15 @@ function VideoPlayer(props: IProps) {
   }, [volume]);
 
   const seekToPlayer = () => {
-    if (timeStart && playerEl) {
+    if (timeStart && playerEl.current) {
       playerEl.current.currentTime = timeStart;
     }
   };
 
   const setVolume = (value: number) => {
-    playerEl.current.volume = value;
+    if (playerEl.current) {
+      playerEl.current.volume = value;
+    }
     setMuted(!value);
   };
 
@@ -101,7 +105,9 @@ function VideoPlayer(props: IProps) {
   };
 
   const handleDurationLoaded = (e: Event) => {
-    let duration = e.currentTarget['duration'];
+    const target = e.currentTarget as HTMLVideoElement;
+    if (!target) return;
+    let duration = target.duration;
     if (duration === Infinity) {
         duration = 0;
     }
@@ -110,9 +116,10 @@ function VideoPlayer(props: IProps) {
   };
 
   const handleProgress = (e: Event) => {
-    const { currentTarget } = e;
-    const currentTime = currentTarget['currentTime'];
-    const duration = currentTarget['duration'];
+    const target = e.currentTarget as HTMLVideoElement;
+    if (!target || !progressEl.current) return;
+    const currentTime = target.currentTime;
+    const duration = target.duration;
     if (duration) {
       setCurrentTime(currentTime);
       const percentage = (100 / duration) * currentTime;
@@ -126,6 +133,7 @@ function VideoPlayer(props: IProps) {
   };
 
   const handleProgressClick = (e: Event) => {
+    if (!progressEl.current || !playerEl.current) return;
     const x =
       e['clientX'] -
       progressEl.current.getBoundingClientRect().left +
@@ -137,6 +145,7 @@ function VideoPlayer(props: IProps) {
   };
 
   const handleVolumeClick = (e: Event) => {
+    if (!volumeEl.current || !playerEl.current) return;
     const y =
       volumeEl.current.offsetWidth -
       (e['clientY'] -
@@ -149,6 +158,7 @@ function VideoPlayer(props: IProps) {
   };
 
   const handleMuteClick = () => {
+    if (!playerEl.current) return;
     if (muted) {
       playerEl.current.muted = false;
       setVolume(DEFAULT_VOLUME);
@@ -189,7 +199,9 @@ function VideoPlayer(props: IProps) {
   };
 
   const handleMarkerClick = (marker: object) => {
-    playerEl.current.currentTime = marker['time'];
+    if (playerEl.current) {
+      playerEl.current.currentTime = marker['time'];
+    }
     onMarkerClick(marker);
   };
 
