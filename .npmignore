@@ -10,11 +10,3 @@ jest.config.js
 server.js
 remove.js
 .eslintrc
-
-# IDE & Git
-.idea
-.gitignore
-.git
-
-# Other
-package-lock.json
