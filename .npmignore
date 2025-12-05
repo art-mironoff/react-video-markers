@@ -10,3 +10,4 @@ jest.config.js
 server.js
 remove.js
 .eslintrc
+.babelrc
